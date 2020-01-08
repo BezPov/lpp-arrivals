@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lpp-arrivals
+spec:
+  selector:
+    matchLabels:
+      app: lpp-arrivals
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lpp-arrivals
+    spec:
+      containers:
+        - image: bezpov/lpp-arrivals:1.0.1
+          name: lpp-arrivals-container
+          env:
+            - name: ETCD_SERVER
+              value: "http://etcd-client:2379"
+          ports:
+            - containerPort: 8090
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8090
+            initialDelaySeconds: 20
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8090
+            initialDelaySeconds: 20
+            periodSeconds: 3
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lpp-arrivals-service
+  namespace: default
+  labels:
+    app: lpp-arrivals
+spec:
+  ports:
+    - protocol: TCP
+      port: 91
+      targetPort: 8090
+  selector:
+    app: lpp-arrivals
+  type: NodePort
