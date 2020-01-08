@@ -1,4 +1,4 @@
-const ArrivalsApi = require('../api/../api/arrivals/arrivalsApi');
+const ArrivalsApi = require('../api/../api/arrivalsApi');
 
 const initRoutes = function (server) {
     server.get('/:stationId/daily', async function (req, res, next) {
@@ -15,9 +15,10 @@ const initRoutes = function (server) {
 
         return next();
     });
+
     server.get('/:stationId/live', async function (req, res, next) {
         if (!req.params.stationId) {
-            res.status(400).json({ success: false, error: 'required._id' });
+            res.json(500, { success: false, error: 'required._id' });
 
             return next();
         }

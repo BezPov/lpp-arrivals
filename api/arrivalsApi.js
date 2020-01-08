@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const logger = require('../services/logging');
 
-const StationApi = require('./station/stationApi');
+const StationRequestHandler = require('../requestHandlers/stationRequestHandler');
 
 class ArrivalsApi {
     static async getDailyArrivalsForStation(stationId) {
@@ -59,7 +59,7 @@ class ArrivalsApi {
     }
 
     static async getLiveArrivals(stationId) {
-        const station = await StationApi.findOne({ stationId });
+        const station = await StationRequestHandler.findOneById(stationId);
 
         if (!station || !station.referenceId) {
             return null;
